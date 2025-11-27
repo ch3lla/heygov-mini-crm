@@ -97,7 +97,11 @@ const getAllUserContacts = async (req: IRequest, res: Response) => {
     const user_id = req.user_id;
 
     try {
-        const contactList = await db.select().from(contacts).where(eq(contacts.userId, Number(user_id)));
+        const contactList = await db.select().from(contacts).where(and(
+            eq(contacts.userId, Number(user_id)),
+            eq(contacts.inTrash, false),
+            eq(contacts.isDeleted, false)
+        ));
 
         if (contactList.length == 0) {
             res.status(404).json({
