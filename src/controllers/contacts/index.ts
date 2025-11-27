@@ -9,22 +9,13 @@ const addContact = async (req: IRequest, res: Response) => {
 
     const { firstName, lastName, email, phoneNumber, company } = req.body;
 
-    if (!firstName || !lastName ) {
+    if (!firstName || !email ) {
         res.status(400).json({
             status: "Error",
             message: "Required fields are missing"
         });
         return;
     }
-
-    if (!email && !phoneNumber) {
-        res.status(400).json({
-            status: "Error",
-            message: "At least one of email or phone number must be provided"
-        });
-        return;
-    }
-
     try {
         const newContact = await db.insert(contacts).values({
             firstName,
