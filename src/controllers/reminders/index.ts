@@ -43,13 +43,13 @@ export const getReminder = async (req: IRequest, res: Response) => {
     const userId = req.userId;
     const { reminderId } = req.params;
 
-    if (!userId || !id) return res.status(400).json({
+    if (!userId || !reminderId) return res.status(400).json({
         status: "Error",
         message: "Invalid Request"
     });
 
     try {
-        const reminder = await reminderService.getReminderById(Number(id), userId);
+        const reminder = await reminderService.getReminderById(Number(reminderId), userId);
         if (!reminder) {
             res.status(404).json({
                 status: "Error",
