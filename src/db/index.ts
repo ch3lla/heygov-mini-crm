@@ -9,4 +9,4 @@ const mysql_connection = await mysql.createConnection({
     password: process.env.DATABASE_PASSWORD!,
 });
 
-export const db = drizzle({ client: mysql_connection, logger: true });
+export const db = drizzle({ client: mysql_connection, /* logger: true  */});
