@@ -49,8 +49,8 @@
           "notNull": false,
           "autoincrement": false
         },
-        "user_id": {
-          "name": "user_id",
+        "userId": {
+          "name": "userId",
           "type": "int",
           "primaryKey": false,
           "notNull": true,
@@ -91,12 +91,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "contacts_user_id_users_id_fk": {
-          "name": "contacts_user_id_users_id_fk",
+        "contacts_userId_users_id_fk": {
+          "name": "contacts_userId_users_id_fk",
           "tableFrom": "contacts",
           "tableTo": "users",
           "columnsFrom": [
-            "user_id"
+            "userId"
           ],
           "columnsTo": [
             "id"
