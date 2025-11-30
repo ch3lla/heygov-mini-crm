@@ -7,7 +7,7 @@ router.get('/all', authenticate, getAllUserContacts);
 router.get('/:contactId', authenticate, getContact);
 router.patch('/update/:contactId', authenticate, updateContact);
 router.post('/add', authenticate, addContact);
-router.patch('/remove', authenticate, temporaryDeleteContact);
-router.patch('/delete', authenticate, permanentlyDeleteContact);
+router.patch('/remove/:contactId', authenticate, temporaryDeleteContact);
+router.patch('/delete/:contactId', authenticate, permanentlyDeleteContact);
 
 export default router;
