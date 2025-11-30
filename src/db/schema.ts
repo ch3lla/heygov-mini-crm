@@ -30,6 +30,18 @@ export const contacts = mysqlTable("contacts", {
     nameOrEmailPresent: check('name_or_email_present', sql`email IS NOT NULL OR first_name IS NOT NULL`),
 }));
 
+export const reminders = mysqlTable("reminders", {
+    id: int("id").primaryKey().autoincrement(),
+    userId: int("user_id").notNull().references(() => users.id),
+    userEmail: varchar("user_email", { length: 150 }).notNull(), // Denormalized for easier access
+    title: varchar("title", { length: 255 }).notNull(),
+    description: text("description"),
+    dueDate: timestamp("due_date").notNull(),
+    status: varchar("status", { length: 20 }).default('pending'), // pending, sent, failed
+    sentAt: timestamp("sent_at"),
+    createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const usersRelations = relations(users, ({ many }) => ({
     contacts: many(contacts),
 }));
