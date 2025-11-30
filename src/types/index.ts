@@ -2,7 +2,7 @@ import type { Request } from "express";
 import type { JwtPayload } from "jsonwebtoken";
 
 export interface IRequest extends Request {
-    user_id?: number
+    userId?: number
 }
 
 export interface IUser {
@@ -16,7 +16,7 @@ export interface IUser {
 }
 
 export interface IJwtPayload extends JwtPayload {
-    user_id?: number
+    userId?: number
 }
 
 export interface IContactInput {
