@@ -1,11 +1,11 @@
 import type { IRequest } from "../../types/index.ts";
 import type { Response } from "express";
-import { createContact, getContactById, getAllContacts, update, softDelete, permanentDelete } from "../../services/contacts/index.ts"
+import { createContact, getContactById, getAllContacts, update, softDelete, permanentDelete, getTrashSites, restoreContact } from "../../services/contacts/index.ts"
 
 const addContact = async (req: IRequest, res: Response) => {
     const userId = req.userId;
 
-    const { firstName, lastName, email, phoneNumber, company } = req.body;
+    const { firstName, lastName, email, phoneNumber, company, notes } = req.body;
 
     if (!firstName || !email ) {
         res.status(400).json({
@@ -20,16 +20,16 @@ const addContact = async (req: IRequest, res: Response) => {
             lastName, 
             email, 
             phoneNumber, 
-            company 
+            company,
+            notes
         }, Number(userId))
 
-        if (typeof newContact == 'number') {
-            res.status(201).json({
-                status: "Success",
-                message: "Contact addedd successfully"
-            });
-            return;
-        }
+        res.status(201).json({
+            status: "Success",
+            message: "Contact addedd successfully",
+            data: newContact
+        });
+        return;
     } catch (error: any) {
         if (error?.code == "ER_CHECK_CONSTRAINT_VIOLATED") {
             res.status(400).json({
@@ -212,4 +212,37 @@ const permanentlyDeleteContact = async (req: IRequest, res: Response) => {
     }
 };
 
-export { addContact, getContact, getAllUserContacts, updateContact, temporaryDeleteContact, permanentlyDeleteContact };
+const getUsersTrashSites = async (req: IRequest, res: Response) => {
+    const userId = req.userId;
+    try {
+        const trashSites = await getTrashSites(Number(userId));
+        return res.status(200).json({
+            status: "Success",
+            data: trashSites ?? []
+        });
+    } catch (error: any){
+        return res.status(500).json({
+            status: "Error",
+            message: error.message || "Something went wrong"
+        });
+    }
+}
+
+const restoreUserContact = async (req: IRequest, res: Response) => {
+    const userId = req.userId;
+    const { contactId } = req.params;
+    try {
+        const trashSites = await restoreContact(Number(userId), Number(contactId));
+        return res.status(200).json({
+            status: "Success",
+            data: trashSites ?? []
+        });
+    } catch (error: any){
+        return res.status(500).json({
+            status: "Error",
+            message: error.message || "Something went wrong"
+        });
+    }
+}
+
+export { addContact, getContact, getAllUserContacts, updateContact, temporaryDeleteContact, permanentlyDeleteContact, getUsersTrashSites, restoreUserContact };

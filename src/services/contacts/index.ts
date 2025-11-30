@@ -2,27 +2,34 @@
 import { db } from "../../db/index.ts";
 import { contacts } from "../../db/schema.ts";
 import { eq, and, or, like, gte, lte, desc } from "drizzle-orm";
-import type { IContactInput, IUpdateInput, ISearchOptions } from "../../types/index.ts";
+import type { IContactInput, IUpdateInput, ISearchOptions, IContact } from "../../types/index.ts";
 
-const createContact = async (data: IContactInput, userId: number): Promise<number> => {
+const createContact = async (data: IContactInput, userId: number) => {
     if (!data.firstName || !data.email) {
         throw new Error("First name or email is required.");
     }
 
     try {
-        const newContactId = await db.insert(contacts).values({
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email || null,
-        phoneNumber: data.phoneNumber || null,
-        company: data.company || null,
-        notes: data.notes || null,
-        userId: userId,
-    }).$returningId();
-        return Number(newContactId);
+        const [result] = await db.insert(contacts).values({
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email: data.email || null,
+            phoneNumber: data.phoneNumber || null,
+            company: data.company || null,
+            notes: data.notes || null,
+            userId: userId,
+        }).$returningId();
+        if (!result) {
+            throw new Error("Failed to insert contact");
+        }
+        const newContact = await getContactById(result.id, userId);
+        return newContact;
     } catch (error: any) {
-            if (error?.code === "ER_CHECK_CONSTRAINT_VIOLATED") {
+        if (error?.code === "ER_CHECK_CONSTRAINT_VIOLATED") {
             throw new Error("Database constraint failed: first name or email is missing.");
+        }
+        if (error?.code === "ER_DUP_ENTRY") {
+            throw new Error("A contact with this email already exists.");
         }
         throw error;
     }
@@ -109,7 +116,9 @@ const search = async (options: ISearchOptions, userId: number) => {
         conditions.push(gte(contacts.createdAt, new Date(options.dateFrom)));
     }
     if (options.dateTo) {
-        conditions.push(lte(contacts.createdAt, new Date(options.dateTo)));
+        const toDate = new Date(options.dateTo);
+        toDate.setHours(23, 59, 59, 999);
+        conditions.push(lte(contacts.createdAt, toDate));
     }
 
     return await db.select()
@@ -119,4 +128,21 @@ const search = async (options: ISearchOptions, userId: number) => {
         .orderBy(desc(contacts.createdAt)); // Most recent matches first
 }
 
-export { createContact, getContactById, getAllContacts, update, softDelete, permanentDelete, search };
+const getTrashSites = async (userId: number) => {
+    return db.select().from(contacts).where(and(
+        eq(contacts.userId, userId),
+        eq(contacts.inTrash, true),
+        eq(contacts.isDeleted, false)
+    ));
+}
+
+const restoreContact = async (userId: number, contactId: number) => {
+    const result = await db.update(contacts).set({inTrash: false}).where(and(
+        eq(contacts.id, contactId), 
+        eq(contacts.userId, userId)
+    ));
+
+    return result.length > 0;
+}
+
+export { createContact, getContactById, getAllContacts, update, softDelete, permanentDelete, search, getTrashSites, restoreContact };

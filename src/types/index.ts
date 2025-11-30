@@ -52,3 +52,16 @@ export interface IAgentResponse {
     assistantMessage?: any;
     message?: string;
 }
+
+export interface IContact {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    company: string;
+    notes: string;
+    inTrash: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
