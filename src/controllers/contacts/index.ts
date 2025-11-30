@@ -1,8 +1,6 @@
 import type { IRequest } from "../../types/index.ts";
-import { db } from "../../db/index.ts";
-import { contacts } from "../../db/schema.ts"
 import type { Response } from "express";
-import { eq, and } from "drizzle-orm";
+import { createContact, getContactById, getAllContacts, update, softDelete, permanentDelete } from "../../services/contacts/index.ts"
 
 const addContact = async (req: IRequest, res: Response) => {
     const user_id = req.user_id;
@@ -17,17 +15,16 @@ const addContact = async (req: IRequest, res: Response) => {
         return;
     }
     try {
-        const newContact = await db.insert(contacts).values({
-            firstName,
-            lastName,
-            email: email || null,
-            phoneNumber: phoneNumber || null,
-            company: company || null,
-            userId: Number(user_id),
-        }).$returningId();
+        const newContact = await createContact({ 
+            firstName, 
+            lastName, 
+            email, 
+            phoneNumber, 
+            company 
+        }, Number(user_id))
 
         if (typeof newContact == 'number') {
-            res.status(200).json({
+            res.status(201).json({
                 status: "Success",
                 message: "Contact addedd successfully"
             });
@@ -61,7 +58,7 @@ const getContact = async (req: IRequest, res: Response) => {
     }
 
     try {
-        const contact = await db.select().from(contacts).where(and(eq(contacts.id, Number(contactId)), eq(contacts.userId, Number(user_id))));
+        const contact = await getContactById(Number(contactId), Number(user_id));
 
         if (!contact) {
             res.status(404).json({
@@ -88,16 +85,13 @@ const getAllUserContacts = async (req: IRequest, res: Response) => {
     const user_id = req.user_id;
 
     try {
-        const contactList = await db.select().from(contacts).where(and(
-            eq(contacts.userId, Number(user_id)),
-            eq(contacts.inTrash, false),
-            eq(contacts.isDeleted, false)
-        ));
+        const contactList = await getAllContacts(Number(user_id))
 
         if (contactList.length == 0) {
             res.status(404).json({
                 status: "Error",
-                message: "Contacts not found"
+                message: "Contacts not found",
+                data: []
             });
             return;
         }
@@ -128,24 +122,21 @@ const updateContact = async (req: IRequest, res: Response) => {
         return;
     }
 
-    const updateContactData: Record<string, string> = {};
-    if (first_name !== undefined) updateContactData.firstName = first_name;
-    if (last_name !== undefined) updateContactData.lastName = last_name;
-    if (email !== undefined) updateContactData.email = email;
-    if (phoneNumber !== undefined) updateContactData.phoneNumber = phoneNumber;
-    if (company !== undefined) updateContactData.company = company;
-    if (notes !== undefined) updateContactData.notes = notes;
+    const updateContactData = {
+        firstName: first_name, 
+        lastName: last_name, 
+        email, 
+        phoneNumber, 
+        company, 
+        notes 
+    };
 
-    if (Object.keys(updateContactData).length == 0) {
-        res.status(400).json({
-            status: "Error",
-            message: "No fields to update"
-        });
-        return;
+    if (Object.values(updateContactData).every(v => v === undefined)) {
+        return res.status(400).json({ status: "Error", message: "No fields to update" });
     }
 
     try {
-        const result = await db.update(contacts).set(updateContactData).where(and(eq(contacts.id, Number(contactId)), eq(contacts.userId, Number(user_id))));
+        const result = await update(Number(contactId), Number(user_id), updateContactData);
 
         if (!result) {
             res.status(404).json({
@@ -180,7 +171,7 @@ const temporaryDeleteContact = async (req: IRequest, res: Response) => {
     }
 
     try {
-        await db.update(contacts).set({inTrash: true}).where(and(eq(contacts.id, Number(contactId)), eq(contacts.userId, Number(user_id))));
+        await softDelete(Number(contactId), Number(user_id));
 
         return res.status(204).json({
             status: "Success",
@@ -207,7 +198,7 @@ const permanentlyDeleteContact = async (req: IRequest, res: Response) => {
     }
 
     try {
-        await db.update(contacts).set({isDeleted: true}).where(and(eq(contacts.id, Number(contactId)), eq(contacts.userId, Number(user_id))));
+        await permanentDelete(Number(contactId), Number(user_id));
 
         return res.status(204).json({
             status: "Success",
