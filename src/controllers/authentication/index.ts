@@ -12,9 +12,9 @@ const JWT_EXPIRY: jwt.SignOptions["expiresIn"] = `${Number(process.env.JWT_EXPIR
 const BCRYPT_SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS) || 10;
 
 const registerUser = async (req: Request, res: Response) => {
-    const { firstName, lastName, email, phoneNumber, password, confirm_password } = req.body;
+    const { firstName, lastName, email, phoneNumber, password, confirmPassword } = req.body;
 
-    if (!firstName || !lastName || !password || !confirm_password) {
+    if (!firstName || !lastName || !password || !confirmPassword) {
         res.status(400).json({
             status: "Error",
             message: "Required fields missing"
@@ -47,7 +47,7 @@ const registerUser = async (req: Request, res: Response) => {
         });
     }
 
-    if (password !== confirm_password) {
+    if (password !== confirmPassword) {
         res.status(400).json({
             status: "Error",
             message: "Passwords do not match"
@@ -65,7 +65,7 @@ const registerUser = async (req: Request, res: Response) => {
     }).$returningId();
 
     if (newUser) {
-        const token = jwt.sign({user_id: newUser.id}, JWT_SECRET!, { expiresIn: JWT_EXPIRY }); // todo: fix
+        const token = jwt.sign({userId: newUser.id}, JWT_SECRET!, { expiresIn: JWT_EXPIRY }); // todo: fix
         return res.status(200).json({
             status: "Success",
             data: token
@@ -104,7 +104,7 @@ const login = async (req: Request, res: Response) => {
             }); 
             return;
         }
-        const token = jwt.sign({user_id: user.id}, JWT_SECRET, { expiresIn: JWT_EXPIRY }); // todo: fix
+        const token = jwt.sign({userId: user.id}, JWT_SECRET, { expiresIn: JWT_EXPIRY }); // todo: fix
         return res.status(200).json({
             status: "Success",
             data: token

@@ -8,7 +8,7 @@ import bcrypt from "bcryptjs";
 const BCRYPT_SALT_ROUNDS = process.env.BCRYPT_SALT_ROUNDS || 10;
 
 const getUserProfile = async (req: IRequest, res: Response) => {
-    const userId = req.user_id;
+    const userId = req.userId;
 
     try {
     const result = await db.select().from(users).where(eq(users.id, Number(userId)));
@@ -35,7 +35,7 @@ const getUserProfile = async (req: IRequest, res: Response) => {
 };
 
 const updateUserProfile = async (req: IRequest, res: Response) => {
-    const userId = req.user_id;
+    const userId = req.userId;
 
     const { firstName, lastName, email, phoneNumber, password } = req.body;
 
@@ -69,7 +69,7 @@ const updateUserProfile = async (req: IRequest, res: Response) => {
 };
 
 const deleteUser = async (req: IRequest, res: Response) => {
-    const userId = req.user_id;
+    const userId = req.userId;
     try {
         await db.delete(users).where(eq(users.id, Number(userId)));
         return res.status(200).json({

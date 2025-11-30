@@ -3,7 +3,7 @@ import type { Response } from "express";
 import type { IRequest } from "../../types/index.ts";
 
 const assistantHandler = async (req: IRequest, res: Response): Promise<void> => {
-    const userId = req.user_id;
+    const userId = req.userId;
     const { query } = req.body;
     
     if (!userId) {

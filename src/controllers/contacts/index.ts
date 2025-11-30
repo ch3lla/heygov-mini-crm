@@ -3,7 +3,7 @@ import type { Response } from "express";
 import { createContact, getContactById, getAllContacts, update, softDelete, permanentDelete } from "../../services/contacts/index.ts"
 
 const addContact = async (req: IRequest, res: Response) => {
-    const user_id = req.user_id;
+    const userId = req.userId;
 
     const { firstName, lastName, email, phoneNumber, company } = req.body;
 
@@ -21,7 +21,7 @@ const addContact = async (req: IRequest, res: Response) => {
             email, 
             phoneNumber, 
             company 
-        }, Number(user_id))
+        }, Number(userId))
 
         if (typeof newContact == 'number') {
             res.status(201).json({
@@ -46,7 +46,7 @@ const addContact = async (req: IRequest, res: Response) => {
 };
 
 const getContact = async (req: IRequest, res: Response) => {
-    const user_id = req.user_id;
+    const userId = req.userId;
     const { contactId } = req.params;
 
     if (!contactId) {
@@ -58,7 +58,7 @@ const getContact = async (req: IRequest, res: Response) => {
     }
 
     try {
-        const contact = await getContactById(Number(contactId), Number(user_id));
+        const contact = await getContactById(Number(contactId), Number(userId));
 
         if (!contact) {
             res.status(404).json({
@@ -82,10 +82,10 @@ const getContact = async (req: IRequest, res: Response) => {
 };
 
 const getAllUserContacts = async (req: IRequest, res: Response) => {
-    const user_id = req.user_id;
+    const userId = req.userId;
 
     try {
-        const contactList = await getAllContacts(Number(user_id))
+        const contactList = await getAllContacts(Number(userId))
 
         if (contactList.length == 0) {
             res.status(404).json({
@@ -111,8 +111,8 @@ const getAllUserContacts = async (req: IRequest, res: Response) => {
 
 const updateContact = async (req: IRequest, res: Response) => {
     const { contactId } = req.params;
-    const user_id = req.user_id;
-    const { first_name, last_name, email, phoneNumber, company, notes } = req.body;
+    const userId = req.userId;
+    const { firstName, lastName, email, phoneNumber, company, notes } = req.body;
 
     if (!contactId) {
         res.status(400).json({
@@ -123,8 +123,8 @@ const updateContact = async (req: IRequest, res: Response) => {
     }
 
     const updateContactData = {
-        firstName: first_name, 
-        lastName: last_name, 
+        firstName: firstName, 
+        lastName: lastName, 
         email, 
         phoneNumber, 
         company, 
@@ -136,7 +136,7 @@ const updateContact = async (req: IRequest, res: Response) => {
     }
 
     try {
-        const result = await update(Number(contactId), Number(user_id), updateContactData);
+        const result = await update(Number(contactId), Number(userId), updateContactData);
 
         if (!result) {
             res.status(404).json({
@@ -160,7 +160,7 @@ const updateContact = async (req: IRequest, res: Response) => {
 
 const temporaryDeleteContact = async (req: IRequest, res: Response) => {
     const { contactId } = req.params;
-    const user_id = req.user_id;
+    const userId = req.userId;
 
     if (!contactId) {
         res.status(400).json({
@@ -171,7 +171,7 @@ const temporaryDeleteContact = async (req: IRequest, res: Response) => {
     }
 
     try {
-        await softDelete(Number(contactId), Number(user_id));
+        await softDelete(Number(contactId), Number(userId));
 
         return res.status(204).json({
             status: "Success",
@@ -187,7 +187,7 @@ const temporaryDeleteContact = async (req: IRequest, res: Response) => {
 
 const permanentlyDeleteContact = async (req: IRequest, res: Response) => {
     const { contactId } = req.params;
-    const user_id = req.user_id;
+    const userId = req.userId;
 
     if (!contactId) {
         res.status(400).json({
@@ -198,7 +198,7 @@ const permanentlyDeleteContact = async (req: IRequest, res: Response) => {
     }
 
     try {
-        await permanentDelete(Number(contactId), Number(user_id));
+        await permanentDelete(Number(contactId), Number(userId));
 
         return res.status(204).json({
             status: "Success",
