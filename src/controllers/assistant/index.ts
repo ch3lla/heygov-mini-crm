@@ -53,7 +53,7 @@ export const cleanAndParseAgentResponse = (response: string): any => {
     const lastClose = response.lastIndexOf('}');
     if (firstOpen === -1 || lastClose === -1 || firstOpen >= lastClose) {
         console.error("No JSON brackets found in response");
-        return null;
+        return response;
     }
 
     const cleaned = response.substring(firstOpen, lastClose + 1);
