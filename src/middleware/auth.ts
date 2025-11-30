@@ -17,7 +17,7 @@ export const authenticate = (req: IRequest, res: Response, next: NextFunction) =
 
   try {
     const decoded = jwt.verify(token!, JWT_SECRET) as IJwtPayload;
-    req.user_id = Number(decoded?.user_id);
+    req.userId = Number(decoded?.userId);
     next();
   } catch (err) {
     return res.status(401).json({
