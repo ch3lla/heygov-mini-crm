@@ -65,3 +65,10 @@ export interface IContact {
     createdAt: Date;
     updatedAt: Date;
 }
+
+export interface IReminderInput {
+    title: string;
+    description?: string;
+    dueDate: string | Date;
+    userEmail: string;
+}
