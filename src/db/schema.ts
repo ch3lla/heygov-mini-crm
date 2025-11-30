@@ -15,16 +15,20 @@ export const users = mysqlTable("users", {
 export const contacts = mysqlTable("contacts", {
     id: int("id").primaryKey().autoincrement(),
     firstName: varchar("first_name", { length: 100 }),
-    lastName: varchar("last_name", { length: 100 }).notNull(),
+    lastName: varchar("last_name", { length: 100 }),
     email: varchar("email", { length: 150 }).unique(),
-    phoneNumber: varchar("phone_number", { length: 150 }).notNull(),
+    phoneNumber: varchar("phone_number", { length: 150 }),
     company: varchar("company", { length: 150 }),
     userId: int("user_id").notNull().references(() => users.id),
+    notes: varchar("notes", { length: 255}),
     inTrash: boolean('in_trash').default(false),
     isDeleted: boolean('is_deleted').default(false),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
+}, (t) => ({
+    // constraint allowing either phone number or email to be presnet; at least one of them must be present
+    nameOrEmailPresent: check('name_or_email_present', sql`email IS NOT NULL OR first_name IS NOT NULL`),
+}));
 
 export const usersRelations = relations(users, ({ many }) => ({
     contacts: many(contacts),
