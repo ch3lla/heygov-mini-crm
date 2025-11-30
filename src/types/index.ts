@@ -18,3 +18,37 @@ export interface IUser {
 export interface IJwtPayload extends JwtPayload {
     user_id?: number
 }
+
+export interface IContactInput {
+    firstName: string;
+    lastName: string;
+    email?: string | null;
+    phoneNumber?: string | null;
+    company?: string | null;
+    notes?: string | null;
+}
+
+export interface IUpdateInput {
+    firstName?: string;
+    lastName?: string;
+    email?: string | null;
+    phoneNumber?: string | null;
+    company?: string | null;
+    notes?: string | null;
+}
+
+export interface ISearchOptions {
+    query?: string;
+    dateFrom?: string | Date;
+    dateTo?: string | Date;
+    limit?: number;
+}
+
+export interface IAgentResponse {
+    type: string;
+    id?: string;
+    name?: string;
+    args?: any;
+    assistantMessage?: any;
+    message?: string;
+}
