@@ -25,7 +25,7 @@ export const addToConversationHistory = (
     const history = conversationStore.get(key) || [];
     history.push(message);
     
-    // Keep only last 20 messages (10 exchanges) to avoid context overflow
+    // Keep only last 200 messages (100 exchanges) to avoid context overflow
     if (history.length > 200) {
         history.shift();
     }
