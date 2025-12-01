@@ -6,7 +6,7 @@
 const crmTools = [
     {
         name: "create_contact",
-        description: "Create a new contact in the CRM. Use this when the user explicitly wants to add or save a person's details. You must ensure either an email OR a phone number is provided.",
+        description: "Create a new contact in the CRM. Use this when the user explicitly wants to add or save a person's details. You must ensure either an First Name OR an Email is provided.",
         input_schema: {
             type: "object",
             properties: {
@@ -34,8 +34,7 @@ const crmTools = [
                 type: "string",
                 description: "Any initial notes about the contact."
             }
-            },
-            required: ["firstName"]
+            }
         }
     },
     {
