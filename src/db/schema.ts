@@ -26,7 +26,6 @@ export const contacts = mysqlTable("contacts", {
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 }, (t) => ({
-    // constraint allowing either phone number or email to be presnet; at least one of them must be present
     nameOrEmailPresent: check('name_or_email_present', sql`email IS NOT NULL OR first_name IS NOT NULL`),
 }));
 

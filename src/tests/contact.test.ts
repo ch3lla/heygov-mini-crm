@@ -76,7 +76,7 @@ describe("Contacts Routes", () => {
                 .send({ firstName: "Bob", email: "bob@test.com" });
 
             expect(res.status).toBe(400);
-            expect(res.body.message).toBe("At least one of email or phone number must be provided");
+            expect(res.body.message).toBe("At least one of first name or email must be provided");
         });
     });
 

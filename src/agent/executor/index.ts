@@ -7,8 +7,8 @@ export const executeCRMTool = async ( userId: number, toolName: string, toolInpu
     try {
         switch (toolName) {
             case 'create_contact':
-                if (!toolInput.firstName && toolInput.email) {
-                    throw new Error('firstName is required to create a contact');
+                if (!toolInput.firstName && !toolInput.email) {
+                    throw new Error('firstName or email is required to create a contact');
                 }
 
                 const contactId = await createContact(toolInput, userId);
@@ -70,7 +70,6 @@ export const executeCRMTool = async ( userId: number, toolName: string, toolInpu
                 };
 
             case 'send_email':
-                // TODO: Implement email sending (Nodemailer, SendGrid, etc.)
                 if (!toolInput.recipientEmail && !toolInput.subject && !toolInput.body){
                     throw new Error("Required fields are missing");
                 }

@@ -7,7 +7,7 @@ const addContact = async (req: IRequest, res: Response) => {
 
     const { firstName, lastName, email, phoneNumber, company, notes } = req.body;
 
-    if (!firstName || !email ) {
+    if (!firstName && !email ) {
         res.status(400).json({
             status: "Error",
             message: "Required fields are missing"
@@ -34,7 +34,7 @@ const addContact = async (req: IRequest, res: Response) => {
         if (error?.code == "ER_CHECK_CONSTRAINT_VIOLATED") {
             res.status(400).json({
                 status: "Error",
-                message: "At least one of email or phone number must be provided"
+                message: "At least one of first name or email must be provided"
             });
             return
         }
