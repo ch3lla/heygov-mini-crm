@@ -31,6 +31,7 @@ describe("Contacts Routes", () => {
                 company: null,
                 userId: 1,
                 notes: null,
+                tags: [],
                 inTrash: false,
                 isDeleted: false,
                 createdAt: new Date(),
