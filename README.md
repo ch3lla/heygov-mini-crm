@@ -3,7 +3,7 @@
 
 A modern, intelligent CRM built with Node.js, TypeScript, and Drizzle ORM. This project features a robust REST API for contact management and a powerful AI Agent (powered by Claude) that can perform complex CRM tasks, log interactions, and prepare meeting briefings via natural language.
 
-## 🚀 Tech Stack
+## Tech Stack
   * **Runtime:** Node.js (v20+)
   * **Framework:** Express.js
   * **Language:** TypeScript
