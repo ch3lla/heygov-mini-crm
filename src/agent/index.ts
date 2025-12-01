@@ -11,7 +11,7 @@ export const claude = new Anthropic({
 });
 
 export async function runAgent(userId: number, query: string) {
-    const conversationHistory = getConversationHistory(userId);
+    const conversationHistory = sanitizeHistory(getConversationHistory(userId));
     const currentMessages: Anthropic.MessageParam[] = [
         ...conversationHistory,
         { role: "user", content: query }
@@ -79,4 +79,23 @@ export async function runAgent(userId: number, query: string) {
         message: finalResponseText,
         toolResults: toolResultsSummary
     };
+}
+
+// helper function to prevent hanging tool_use in history
+function sanitizeHistory(history: Anthropic.MessageParam[]): Anthropic.MessageParam[] {
+    if (history.length === 0) {
+        return history;
+    }
+    const lastMsg = history[history.length - 1];
+    
+    // Check if it is from assistant
+    if (lastMsg?.role === "assistant" && Array.isArray(lastMsg?.content)) {
+        const hasToolUse = lastMsg.content.some((block: any) => block.type === "tool_use");
+        
+        if (hasToolUse) {
+            console.warn("[Sanitizer] Removing corrupted dangling tool_use from history.");
+            return history.slice(0, -1);
+        }
+    }
+    return history
 }
