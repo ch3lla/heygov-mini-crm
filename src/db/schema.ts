@@ -1,5 +1,5 @@
 import { relations, sql } from "drizzle-orm";
-import { mysqlTable, text, varchar, int, timestamp, check, boolean } from "drizzle-orm/mysql-core";
+import { mysqlTable, text, varchar, int, timestamp, check, boolean, json } from "drizzle-orm/mysql-core";
 
 export const users = mysqlTable("users", {
     id: int("id").primaryKey().autoincrement(),
@@ -21,6 +21,7 @@ export const contacts = mysqlTable("contacts", {
     company: varchar("company", { length: 150 }),
     userId: int("user_id").notNull().references(() => users.id),
     notes: varchar("notes", { length: 255}),
+    tags: json("tags").$type<string[]>().default([]),
     inTrash: boolean('in_trash').default(false),
     isDeleted: boolean('is_deleted').default(false),
     createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -32,7 +33,7 @@ export const contacts = mysqlTable("contacts", {
 export const reminders = mysqlTable("reminders", {
     id: int("id").primaryKey().autoincrement(),
     userId: int("user_id").notNull().references(() => users.id),
-    userEmail: varchar("user_email", { length: 150 }).notNull(), // Denormalized for easier access
+    userEmail: varchar("user_email", { length: 150 }).notNull(),
     title: varchar("title", { length: 255 }).notNull(),
     description: text("description"),
     dueDate: timestamp("due_date").notNull(),
@@ -41,6 +42,23 @@ export const reminders = mysqlTable("reminders", {
     createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const interactions = mysqlTable("interactions", {
+    id: int("id").primaryKey().autoincrement(),
+    userId: int("user_id").notNull().references(() => users.id),
+    contactId: int("contact_id").notNull().references(() => contacts.id),
+    type: varchar("type", { length: 50 }), // 'call', 'email', 'meeting', 'lunch'
+    summary: text("summary"),
+    date: timestamp("date").defaultNow(),
+});
+
 export const usersRelations = relations(users, ({ many }) => ({
     contacts: many(contacts),
+    interactions: many(interactions),
+}));
+
+export const interactionsRelations = relations(interactions, ({ one }) => ({
+    contact: one(contacts, {
+        fields: [interactions.contactId],
+        references: [contacts.id],
+    }),
 }));
