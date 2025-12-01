@@ -5,14 +5,14 @@ import { eq, and, or, like, gte, lte, desc } from "drizzle-orm";
 import type { IContactInput, IUpdateInput, ISearchOptions, IContact } from "../../types/index.js";
 
 const createContact = async (data: IContactInput, userId: number) => {
-    if (!data.firstName || !data.email) {
+    if (!data.firstName && !data.email) {
         throw new Error("First name or email is required.");
     }
 
     try {
         const [result] = await db.insert(contacts).values({
-            firstName: data.firstName,
-            lastName: data.lastName,
+            firstName: data.firstName || null,
+            lastName: data.lastName || null,
             email: data.email || null,
             phoneNumber: data.phoneNumber || null,
             company: data.company || null,
