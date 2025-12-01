@@ -28,7 +28,7 @@ export async function runAgent(userId: number, query: string) {
         iteration++;
 
         const response = await claude.messages.create({
-            model: "claude-haiku-4-5", // going with this fpr a quick test on the use case + its fast
+            model: "claude-haiku-4-5", // going with this for a quick test on the use case + its fast
             max_tokens: 4096,
             system: SYSTEM_PROMPT,
             tools: crmTools as any,
