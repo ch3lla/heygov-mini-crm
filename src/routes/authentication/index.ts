@@ -1,4 +1,4 @@
-import { registerUser, login } from "../../controllers/authentication/index.ts";
+import { registerUser, login } from "../../controllers/authentication/index.js";
 import express from "express";
 const router = express.Router();
 

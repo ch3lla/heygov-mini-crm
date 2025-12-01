@@ -1,6 +1,6 @@
 import express from "express";
-import { addContact, getContact, getAllUserContacts, updateContact, temporaryDeleteContact, permanentlyDeleteContact, getUsersTrashSites, restoreUserContact  } from "../../controllers/contacts/index.ts";
-import { authenticate } from "../../middleware/auth.ts";
+import { addContact, getContact, getAllUserContacts, updateContact, temporaryDeleteContact, permanentlyDeleteContact, getUsersTrashSites, restoreUserContact  } from "../../controllers/contacts/index.js";
+import { authenticate } from "../../middleware/auth.js";
 const router = express.Router();
 
 router.get('/all', authenticate, getAllUserContacts);

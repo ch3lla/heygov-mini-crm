@@ -2,8 +2,8 @@
 import "dotenv/config";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { db } from "../../db/index.ts";
-import { users } from "../../db/schema.ts";
+import { db } from "../../db/index.js";
+import { users } from "../../db/schema.js";
 import { eq } from "drizzle-orm"
 import type { Request, Response } from "express";
 

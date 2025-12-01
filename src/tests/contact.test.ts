@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import request from "supertest";
-import { app } from "../index.ts";
+import { app } from "../index.js";
 import jwt from "jsonwebtoken";
-import * as contactService from "../services/contacts/index.ts";
+import * as contactService from "../services/contacts/index.js";
 
 // Mock the entire Contact Service module
 vi.mock("../services/contacts/index");
@@ -21,8 +21,22 @@ describe("Contacts Routes", () => {
 
     describe("POST /api/v1/contacts/add", () => {
         it("should create a contact successfully", async () => {
-            // Mock service to return a new ID
-            vi.mocked(contactService.createContact).mockResolvedValue(101);
+            // Mock service to return a new response
+            const mockContactResponse = {
+                id: 101,
+                firstName: "Alice",
+                lastName: "Wonderland",
+                email: "alice@example.com",
+                phoneNumber: null,
+                company: null,
+                userId: 1,
+                notes: null,
+                inTrash: false,
+                isDeleted: false,
+                createdAt: new Date(),
+                updatedAt: new Date()
+            };
+            vi.mocked(contactService.createContact).mockResolvedValue(mockContactResponse);
 
             const res = await request(app)
                 .post("/api/v1/contacts/add")

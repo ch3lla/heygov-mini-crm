@@ -1,10 +1,10 @@
 import "dotenv/config";
 import { Anthropic } from "@anthropic-ai/sdk";
-import { SYSTEM_PROMPT } from "./prompts/index.ts";
-import { crmTools } from "./tools/index.ts"
-import type { IAgentResponse } from "../types/index.ts"
-import { getConversationHistory, addToConversationHistory } from "./store/index.ts";
-import { executeCRMTool } from "./executor/index.ts";
+import { SYSTEM_PROMPT } from "./prompts/index.js";
+import { crmTools } from "./tools/index.js"
+import type { IAgentResponse } from "../types/index.js"
+import { getConversationHistory, addToConversationHistory } from "./store/index.js";
+import { executeCRMTool } from "./executor/index.js";
 
 export const claude = new Anthropic({
   apiKey: process.env.CLAUDE_API_KEY!,

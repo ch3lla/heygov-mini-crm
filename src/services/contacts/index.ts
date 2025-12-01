@@ -1,8 +1,8 @@
 
-import { db } from "../../db/index.ts";
-import { contacts } from "../../db/schema.ts";
+import { db } from "../../db/index.js";
+import { contacts } from "../../db/schema.js";
 import { eq, and, or, like, gte, lte, desc } from "drizzle-orm";
-import type { IContactInput, IUpdateInput, ISearchOptions, IContact } from "../../types/index.ts";
+import type { IContactInput, IUpdateInput, ISearchOptions, IContact } from "../../types/index.js";
 
 const createContact = async (data: IContactInput, userId: number) => {
     if (!data.firstName || !data.email) {

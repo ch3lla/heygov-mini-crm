@@ -1,8 +1,8 @@
-import authentication from "./authentication/index.ts";
-import users from "./users/index.ts";
-import contacts from "./contacts/index.ts";
-import assistant from "./assistant/index.ts";
-import reminders from "./reminders/index.ts";
+import authentication from "./authentication/index.js";
+import users from "./users/index.js";
+import contacts from "./contacts/index.js";
+import assistant from "./assistant/index.js";
+import reminders from "./reminders/index.js";
 import express from "express";
 
 const router = express.Router();

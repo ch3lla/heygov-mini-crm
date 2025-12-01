@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import request from "supertest";
-import { app } from "../index.ts";
-import { db } from "../db/index.ts";
+import { app } from "../index.js";
+import { db } from "../db/index.js";
 import jwt from "jsonwebtoken";
-import * as reminderService from "../services/reminders/index.ts";
+import * as reminderService from "../services/reminders/index.js";
 
-vi.mock("../services/reminders/index.ts");
-vi.mock("../db/index.ts");
+vi.mock("../services/reminders/index.js");
+vi.mock("../db/index.js");
 
 const generateToken = (userId: number) => {
     return jwt.sign({ userId: userId }, process.env.JWT_SECRET || "supersecret", { expiresIn: "1h" });

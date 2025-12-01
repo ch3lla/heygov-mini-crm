@@ -1,5 +1,5 @@
 import type { Response, NextFunction } from "express";
-import type { IRequest, IJwtPayload } from "../types/index.ts";
+import type { IRequest, IJwtPayload } from "../types/index.js";
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecret";

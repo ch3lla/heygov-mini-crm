@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import request from "supertest";
-import { app } from "../index.ts"; // Ensure app is exported from src/index.ts
-import { db } from "../db/index.ts";
+import { app } from "../index.js"; // Ensure app is exported from src/index.ts
+import { db } from "../db/index.js";
 import bcrypt from "bcryptjs";
 
 // Mock Database and Bcrypt

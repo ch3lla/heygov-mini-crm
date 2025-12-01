@@ -1,18 +1,18 @@
-import cron from 'node-cron';
-import { db } from '../db/index.ts';
-import { reminders } from '../db/schema.ts'; // You'll need to create this table
-import { eq, and, lte } from 'drizzle-orm';
-import { sendEmail } from '../services/email/index.ts';
+import cron from "node-cron";
+import { db } from "../db/index.js";
+import { reminders } from "../db/schema.js"; // You"ll need to create this table
+import { eq, and, lte } from "drizzle-orm";
+import { sendEmail } from "../services/email/index.js";
 
 export const startReminderJob = () => {
-  cron.schedule('* * * * *', async () => { // every minute
-    console.log('Checking for due reminders...');
+  cron.schedule("* * * * *", async () => { // every minute
+    console.log("Checking for due reminders...");
     
     const now = new Date();
 
     try {
       const dueReminders = await db.select().from(reminders).where(and(
-        eq(reminders.status, 'pending'),
+        eq(reminders.status, "pending"),
         lte(reminders.dueDate, now)
       ));
 
@@ -25,12 +25,12 @@ export const startReminderJob = () => {
 
         if (sent) {
           await db.update(reminders)
-            .set({ status: 'sent', sentAt: new Date() })
+            .set({ status: "sent", sentAt: new Date() })
             .where(eq(reminders.id, reminder.id));
         }
       }
     } catch (error) {
-      console.error('Error processing reminders:', error);
+      console.error("Error processing reminders:", error);
     }
   });
 };

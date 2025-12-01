@@ -1,7 +1,7 @@
 import type { Response } from "express";
-import type { IRequest } from "../../types/index.ts";
-import { db } from "../../db/index.ts";
-import { users } from "../../db/schema.ts";
+import type { IRequest } from "../../types/index.js";
+import { db } from "../../db/index.js";
+import { users } from "../../db/schema.js";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 

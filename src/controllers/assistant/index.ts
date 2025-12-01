@@ -1,6 +1,6 @@
-import { runAgent } from "../../agent/index.ts";
+import { runAgent } from "../../agent/index.js";
 import type { Response } from "express";
-import type { IRequest } from "../../types/index.ts";
+import type { IRequest } from "../../types/index.js";
 
 const assistantHandler = async (req: IRequest, res: Response): Promise<void> => {
     const userId = req.userId;

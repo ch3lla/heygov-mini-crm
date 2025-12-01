@@ -1,6 +1,6 @@
-import { getUserProfile, updateUserProfile, deleteUser } from "../../controllers/users/index.ts";
+import { getUserProfile, updateUserProfile, deleteUser } from "../../controllers/users/index.js";
 import express from "express";
-import { authenticate } from "../../middleware/auth.ts";
+import { authenticate } from "../../middleware/auth.js";
 const router = express.Router();
 
 router.get("/profile", authenticate, getUserProfile);

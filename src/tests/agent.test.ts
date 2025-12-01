@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeAll } from "vitest";
-import { runAgent } from "../agent/index.ts";
-import * as executor from "../agent/executor/index.ts";
+import { runAgent } from "../agent/index.js";
+import * as executor from "../agent/executor/index.js";
 
 vi.spyOn(executor, "executeCRMTool").mockImplementation(async (userId, name, input) => {
     return { success: true, mocked: true, message: "Tool executed successfully in test" };

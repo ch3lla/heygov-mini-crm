@@ -1,7 +1,7 @@
-import { db } from "../../db/index.ts";
-import { reminders } from "../../db/schema.ts";
+import { db } from "../../db/index.js";
+import { reminders } from "../../db/schema.js";
 import { eq, and, desc } from "drizzle-orm";
-import type { IReminderInput } from "../../types/index.ts";
+import type { IReminderInput } from "../../types/index.js";
 
 const createReminder = async (data: IReminderInput, userId: number) => {
     try {

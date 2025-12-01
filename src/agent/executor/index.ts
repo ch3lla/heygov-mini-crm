@@ -1,7 +1,7 @@
-import { createContact, search, update, softDelete } from "../../services/contacts/index.ts";
-import { sendEmail } from "../../services/email/index.ts";
-import { createReminder } from "../../services/reminders/index.ts";
-import { getUserEmail } from "../../controllers/users/index.ts";
+import { createContact, search, update, softDelete } from "../../services/contacts/index.js";
+import { sendEmail } from "../../services/email/index.js";
+import { createReminder } from "../../services/reminders/index.js";
+import { getUserEmail } from "../../controllers/users/index.js";
 
 export const executeCRMTool = async ( userId: number, toolName: string, toolInput: any): Promise<any> => {
     try {

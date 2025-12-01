@@ -1,9 +1,9 @@
 import "dotenv/config";
 import express from "express";
-import router from "./routes/index.ts";
+import router from "./routes/index.js";
 import cors from "cors";
 import morgan from "morgan";
-import { startReminderJob } from './jobs/index.ts';
+import { startReminderJob } from "./jobs/index.ts;
 
 const PORT = process.env.PORT || 4000;
 export const app = express();

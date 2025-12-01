@@ -1,7 +1,7 @@
 import type { Response } from "express";
-import type { IRequest } from "../../types/index.ts";
-import { createReminder, getReminderById, updateReminder, getAllReminders, deleteReminder } from "../../services/reminders/index.ts";
-import { getUserEmail } from "../users/index.ts";
+import type { IRequest } from "../../types/index.js";
+import { createReminder, getReminderById, updateReminder, getAllReminders, deleteReminder } from "../../services/reminders/index.js";
+import { getUserEmail } from "../users/index.js";
 
 const createUserReminder = async (req: IRequest, res: Response) => {
     const userId = req.userId;

@@ -1,6 +1,6 @@
-import type { IRequest } from "../../types/index.ts";
+import type { IRequest } from "../../types/index.js";
 import type { Response } from "express";
-import { createContact, getContactById, getAllContacts, update, softDelete, permanentDelete, getTrashSites, restoreContact } from "../../services/contacts/index.ts"
+import { createContact, getContactById, getAllContacts, update, softDelete, permanentDelete, getTrashSites, restoreContact } from "../../services/contacts/index.js"
 
 const addContact = async (req: IRequest, res: Response) => {
     const userId = req.userId;
