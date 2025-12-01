@@ -42,7 +42,7 @@ export async function runAgent(userId: number, query: string) {
         currentMessages.push(assistantMessage);
         addToConversationHistory(userId, assistantMessage);
 
-        console.log("res: ", response)
+        // console.log("res: ", response)
 
         if (response.stop_reason !== "tool_use") { // break out of the loop here if llm is not calling a tool
             const textBlock = response.content.find(b => b.type === "text");
@@ -71,6 +71,7 @@ export async function runAgent(userId: number, query: string) {
             content: toolResultBlocks
         };
         currentMessages.push(toolResultMessage);
+        // console.log(currentMessages)
         addToConversationHistory(userId, toolResultMessage);
     }
     

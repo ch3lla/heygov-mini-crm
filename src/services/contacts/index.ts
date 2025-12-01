@@ -1,7 +1,7 @@
 
 import { db } from "../../db/index.js";
-import { contacts } from "../../db/schema.js";
-import { eq, and, or, like, gte, lte, desc } from "drizzle-orm";
+import { contacts, interactions, reminders } from "../../db/schema.js";
+import { eq, and, or, like, gte, lte, desc, sql } from "drizzle-orm";
 import type { IContactInput, IUpdateInput, ISearchOptions, IContact } from "../../types/index.js";
 
 const createContact = async (data: IContactInput, userId: number) => {
@@ -10,6 +10,7 @@ const createContact = async (data: IContactInput, userId: number) => {
     }
 
     try {
+        const tagsArray = Array.isArray(data.tags) ? data.tags : (data.tags ? [data.tags] : []);
         const [result] = await db.insert(contacts).values({
             firstName: data.firstName || null,
             lastName: data.lastName || null,
@@ -17,6 +18,7 @@ const createContact = async (data: IContactInput, userId: number) => {
             phoneNumber: data.phoneNumber || null,
             company: data.company || null,
             notes: data.notes || null,
+            tags: tagsArray,
             userId: userId,
         }).$returningId();
         if (!result) {
@@ -145,4 +147,74 @@ const restoreContact = async (userId: number, contactId: number) => {
     return result.length > 0;
 }
 
-export { createContact, getContactById, getAllContacts, update, softDelete, permanentDelete, search, getTrashSites, restoreContact };
+const getContactInteractions = async (contactId: number) => {
+    return db.select().from(interactions).where(eq(interactions.contactId, contactId));
+}
+
+const createInteraction = async (userId: number, contactId: number, type: string, summary: string, date?: Date) => {
+    const contact = await db.select().from(contacts).where(and(eq(contacts.id, contactId), eq(contacts.userId, userId)));
+    if (!contact.length) {
+        throw new Error("Contact not found");
+    }
+
+    await db.insert(interactions).values({
+        userId,
+        contactId: contactId,
+        type: type,
+        summary: summary,
+        date: new Date(date || Date.now())
+    });
+
+    return { success: true, message: "Interaction logged." };
+};
+
+ const generateBriefing = async (userId: number, contactId: number) => {
+    const contactResult = await db.select().from(contacts).where(and(eq(contacts.id, contactId), eq(contacts.userId, userId)));
+    const contact = contactResult[0];
+
+    if (!contact) {
+        throw new Error("Contact not found");
+    }
+
+    const lastInteractions = await db.select().from(interactions)
+        .where(and(eq(interactions.contactId, contactId), eq(interactions.userId, userId)))
+        .orderBy(desc(interactions.date))
+        .limit(5); // only need last 5 interactions
+
+    // use fuzzy search to retrieve possible pednidng reminders for contact
+    const pendingReminders = await db.select().from(reminders)
+        .where(and(
+            eq(reminders.userId, userId), 
+            eq(reminders.status, "pending"),
+            sql`description LIKE ${`%${contact.firstName}%`}` 
+        ));
+
+    return {
+        profile: contact,
+        history: lastInteractions,
+        reminders: pendingReminders,
+        ai_note: "Summarize this data for the user in a bulleted briefing format."
+    };
+};
+
+const getStats = async (userId: number) => {
+    const totalContacts = await db.select({ count: sql<number>`count(*)` })
+        .from(contacts).where(eq(contacts.userId, userId));
+    
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    const recentInteractions = await db.select({ count: sql<number>`count(*)` })
+        .from(interactions)
+        .where(and(
+            eq(interactions.userId, userId),
+            gte(interactions.date, startOfMonth)
+        ));
+
+    return {
+        total_contacts: totalContacts[0]?.count ?? 0,
+        interactions_this_month: recentInteractions[0]?.count ?? 0,
+        message: "Here is your CRM overview."
+    };
+};
+
+export { createContact, getContactById, getAllContacts, update, softDelete, permanentDelete, search, getTrashSites, restoreContact, getContactInteractions, createInteraction, generateBriefing, getStats };

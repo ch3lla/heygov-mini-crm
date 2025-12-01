@@ -1,4 +1,4 @@
-import { createContact, search, update, softDelete } from "../../services/contacts/index.js";
+import { createContact, search, update, softDelete, createInteraction, generateBriefing, getStats } from "../../services/contacts/index.js";
 import { sendEmail } from "../../services/email/index.js";
 import { createReminder } from "../../services/reminders/index.js";
 import { getUserEmail } from "../../controllers/users/index.js";
@@ -110,7 +110,22 @@ export const executeCRMTool = async ( userId: number, toolName: string, toolInpu
                         message: "Failed to set Reminder"
                     }
                 }
+            case 'log_interaction':
+                if (!toolInput.contactId && !toolInput.type && !toolInput.description) {
+                    throw new Error("Missing required fields");
+                }
+                return await createInteraction(userId, Number(toolInput.contactId), toolInput.type, toolInput.summary, toolInput?.date);
 
+            case 'generate_briefing':
+                if (!toolInput.contactId) {
+                    throw new Error("Missing required fields");
+                }
+                const briefing = await generateBriefing(userId, Number(toolInput.contactId));
+                return { success: true, data: briefing };
+
+            case 'get_crm_stats':
+                const stats = await getStats(userId);
+                return { success: true, data: stats };
             default:
                 throw new Error(`Unknown tool: ${toolName}`);
         }

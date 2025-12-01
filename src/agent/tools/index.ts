@@ -122,6 +122,49 @@ const crmTools = [
             },
             required: ["taskDescription", "dueDateTime"]
         }
+    },
+    {
+        name: "log_interaction",
+         description: "Log a past interaction with a contact in the database. Useful when a user asks a question about an interaction with a contact",
+        input_schema: {
+            type: "object",
+            properties: {
+                contactId: { type: "integer", description: "The unique ID of the contact"},
+                type: { 
+                    type: "string", 
+                    enum: ["call", "email", "meeting", "social", "other"],
+                    description: "The type of interaction." 
+                },
+                summary: { type: "string", description: "Summary of what happened." },
+                date: { type: "string", description: "ISO date string. If user says 'yesterday', calculate it." }
+            },
+            required: ["contactId", "type", "description"]
+        }
+    },
+    {
+        name: "generate_briefing",
+        description: "Generate a preparatory briefing for a contact. Use this when the user wants to prepare for a meeting with a contact or asks 'Who is this guy?'.",
+        input_schema: {
+            type: "object",
+            properties: {
+                contactId: { type: "integer" }
+            },
+            required: ["contactId"]
+        }
+    },
+    {
+        name: "get_crm_stats",
+        description: "Get high-level statistics about the CRM usage. Use for questions like 'How many contacts do I have?' or 'How is my networking going?'.",
+        input_schema: {
+            type: "object",
+            properties: {
+                metric: { 
+                    type: "string", 
+                    enum: ["overview", "recent_growth", "interaction_volume"],
+                    default: "overview"
+                }
+            }
+        }
     }
 ];
 
