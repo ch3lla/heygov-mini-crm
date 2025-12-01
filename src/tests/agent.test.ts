@@ -109,4 +109,20 @@ describe("CRM Agent Intent Evals", () => {
         // Regex for ISO-like date (YYYY-MM-DD...)
         expect(toolCall?.input.dueDateTime).toMatch(/^\d{4}-\d{2}-\d{2}/);
     }, 20000);
+
+    // TEST CASE 7: Create contact with minimum data
+    it("should create contact with ONLY firstName and company", async () => {
+        const query = "Add Alex, the CTO from MegaCorp";
+        const response = await runAgent(TEST_userId, query);
+
+        const toolCall = response.toolResults.find(t => t.tool === "create_contact");
+        
+        expect(toolCall).toBeDefined();
+        expect(toolCall?.input).toMatchObject({
+            firstName: "Alex",
+            company: "MegaCorp"
+        });
+        
+        expect(toolCall?.input.email).toBeUndefined();
+    }, 20000);
 });
