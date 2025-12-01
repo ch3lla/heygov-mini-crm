@@ -1,4 +1,7 @@
 import { createContact, search, update, softDelete } from "../../services/contacts/index.ts";
+import { sendEmail } from "../../services/email/index.ts";
+import { createReminder } from "../../services/reminders/index.ts";
+import { getUserEmail } from "../../controllers/users/index.ts";
 
 export const executeCRMTool = async ( userId: number, toolName: string, toolInput: any): Promise<any> => {
     try {
@@ -68,29 +71,46 @@ export const executeCRMTool = async ( userId: number, toolName: string, toolInpu
 
             case 'send_email':
                 // TODO: Implement email sending (Nodemailer, SendGrid, etc.)
-                return {
-                    success: true,
-                    message: `Email drafted to ${toolInput.recipientEmail}`,
-                    draft: {
-                        to: toolInput.recipientEmail,
-                        subject: toolInput.subject,
-                        body: toolInput.body
-                    },
-                    note: 'Email sending not yet implemented - this is a draft'
-                };
+                if (!toolInput.recipientEmail && !toolInput.subject && !toolInput.body){
+                    throw new Error("Required fields are missing");
+                }
 
+                const res = await sendEmail(toolInput.recipientEmail, toolInput.subject, toolInput.body);
+                if (res == true) {
+                    return {
+                        success: true,
+                        message: `Email sent to ${toolInput.recipientEmail}`
+                    }
+                } else {
+                    return {
+                        success: false,
+                        message: "Failed to send Email"
+                    }
+                }
             case 'set_reminder':
-                // TODO: Implement reminder system (database table + cron job)
-                return {
-                    success: true,
-                    message: 'Reminder set',
-                    reminder: {
-                        task: toolInput.taskDescription,
-                        dueDate: toolInput.dueDateTime,
-                        contactId: toolInput.contactId || null
-                    },
-                    note: 'Reminder system not yet implemented - this is a placeholder'
-                };
+                if (!toolInput.contactId && !toolInput.title && !toolInput.taskDescription && !toolInput.dueDateTime){
+                    throw new Error("Required fields are missing");
+                }
+
+                const userEmail = await getUserEmail(userId!) as string;
+                const result = await createReminder({
+                    title: toolInput.title, 
+                    description: toolInput.taskDescription, 
+                    dueDate: toolInput.dueDateTime,
+                    userEmail
+                }, userId);
+
+                if (result != null) {
+                    return {
+                        success: false,
+                        message: "Reminder set successfully"
+                    }
+                } else {
+                    return {
+                        success: true,
+                        message: "Failed to set Reminder"
+                    }
+                }
 
             default:
                 throw new Error(`Unknown tool: ${toolName}`);

@@ -3,6 +3,7 @@ import express from "express";
 import router from "./routes/index.ts";
 import cors from "cors";
 import morgan from "morgan";
+import { startReminderJob } from './jobs/index.ts';
 
 const PORT = process.env.PORT || 4000;
 export const app = express();
@@ -25,5 +26,6 @@ app.get("/", (req, res) => {
 if (process.env.NODE_ENV !== "test"){
     app.listen(PORT, () => {
         console.log(`Server is running on port:${PORT}`);
+        startReminderJob();
     });
 }

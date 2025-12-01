@@ -61,8 +61,7 @@ const crmTools = [
             description: "The maximum number of results to return.",
             default: 5
         }
-        },
-        required: ["query"]
+        }
     }
     },
     {
@@ -105,9 +104,9 @@ const crmTools = [
         input_schema: {
             type: "object",
             properties: {
-            recipientEmail: { type: "string", description: "The email address to send to." },
-            subject: { type: "string", description: "The email subject line." },
-            body: { type: "string", description: "The content of the email." }
+                recipientEmail: { type: "string", description: "The email address to send to." },
+                subject: { type: "string", description: "The email subject line." },
+                body: { type: "string", description: "The content of the email." }
             },
             required: ["recipientEmail", "subject", "body"]
         }
@@ -118,9 +117,9 @@ const crmTools = [
         input_schema: {
             type: "object",
             properties: {
-            contactId: { type: "integer", description: "The ID of the related contact (optional)." },
-            taskDescription: { type: "string", description: "What to remind the user about (e.g., 'Call Alex')." },
-            dueDateTime: { type: "string", description: "ISO timestamp or YYYY-MM-DD HH:mm string for when the reminder is due." }
+                title: { type: "string", description: "The title of the reminder related to the task"},
+                taskDescription: { type: "string", description: "What to remind the user about (e.g., 'Call Alex')." },
+                dueDateTime: { type: "string", description: "ISO timestamp or YYYY-MM-DD HH:mm string for when the reminder is due." }
             },
             required: ["taskDescription", "dueDateTime"]
         }
