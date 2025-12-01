@@ -26,7 +26,7 @@ describe("CRM Agent Intent Evals", () => {
             company: "HeyGov",
             email: "alex@heygov.com"
         });
-    }, 20000); // Increase timeout for LLM API calls
+    }, 20000);
 
     // TEST CASE 2: Ambiguous Search
     it("should sanitize search queries (removing 'startup')", async () => {
@@ -58,11 +58,55 @@ describe("CRM Agent Intent Evals", () => {
         
         const response = await runAgent(TEST_userId, query);
 
+        // console.log("amb response: ", response)
+
         // Assert: It should NOT call send_email
         const emailCall = response.toolResults.find(t => t.tool === "send_email");
         expect(emailCall).toBeUndefined();
 
         // Assert: The text reply should ask about reminders vs drafting
-        expect(response.message.toLowerCase()).toContain(/reminder|later/);
+        expect(response.message.toLowerCase()).toMatch(/reminder|later|draft/i);
+    }, 20000);
+
+    // TEST CASE 5: Send Email Intent
+    it("should correctly map 'Send Email' intent", async () => {
+        const query = "Send an email to alex@heygov.com with subject 'Meeting' saying 'See you at 5pm'";
+        
+        const response = await runAgent(TEST_userId, query);
+
+        // console.log("email res: ", response)
+
+        // Assert 1: Did it use the right tool?
+        const toolCall = response.toolResults.find(t => t.tool === "send_email");
+        expect(toolCall).toBeDefined();
+
+        // Assert 2: Did it extract the right arguments?
+        expect(toolCall?.input).toMatchObject({
+            recipientEmail: "alex@heygov.com",
+            subject: "Meeting",
+            body: "See you at 5pm"
+        });
+    }, 20000);
+
+    // TEST CASE 6: Set Reminder Intent
+    it("should correctly map 'Set Reminder' intent", async () => {
+        const query = "Remind me to call Alex regarding the contract tomorrow at 10am";
+        
+        const response = await runAgent(TEST_userId, query);
+
+        // console.log("reminder: ", response)
+
+        // Assert 1: Did it use the right tool?
+        const toolCall = response.toolResults.find(t => t.tool === "set_reminder");
+        expect(toolCall).toBeDefined();
+
+        // Assert 2: Check arguments
+        expect(toolCall?.input).toMatchObject({
+            taskDescription: expect.stringMatching(/call Alex/i),
+        });
+        
+        // Assert 3: Date format check (ISO string or YYYY-MM-DD HH:mm)
+        // Regex for ISO-like date (YYYY-MM-DD...)
+        expect(toolCall?.input.dueDateTime).toMatch(/^\d{4}-\d{2}-\d{2}/);
     }, 20000);
 });
