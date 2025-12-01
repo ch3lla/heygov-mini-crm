@@ -81,4 +81,11 @@ const deleteUser = async (req: IRequest, res: Response) => {
     }
 };
 
-export { getUserProfile, updateUserProfile, deleteUser }
+const getUserEmail = async (userId: number) => {
+    if (!userId) {
+        return null;
+    }
+    return (await db.select().from(users).where(eq(users.id, Number(userId))))[0]?.email
+}
+
+export { getUserProfile, updateUserProfile, deleteUser, getUserEmail }
