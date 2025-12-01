@@ -56,6 +56,10 @@ export const usersRelations = relations(users, ({ many }) => ({
     interactions: many(interactions),
 }));
 
+export const contactRelations = relations(contacts, ({many}) => ({
+    interactions: many(interactions),
+}));
+
 export const interactionsRelations = relations(interactions, ({ one }) => ({
     contact: one(contacts, {
         fields: [interactions.contactId],
