@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1764254573149,
-      "tag": "0000_lean_toad",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1764255365826,
-      "tag": "0001_chunky_deathbird",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1764272246264,
-      "tag": "0002_curved_vengeance",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1764535849572,
-      "tag": "0003_thin_iron_fist",
+      "when": 1764595228608,
+      "tag": "0000_sudden_nick_fury",
       "breakpoints": true
     }
   ]
