@@ -20,12 +20,13 @@ export interface IJwtPayload extends JwtPayload {
 }
 
 export interface IContactInput {
-    firstName: string;
-    lastName: string;
+    firstName?: string;
+    lastName?: string;
     email?: string | null;
     phoneNumber?: string | null;
     company?: string | null;
     notes?: string | null;
+    tags?: string[] | [];
 }
 
 export interface IUpdateInput {
@@ -61,6 +62,7 @@ export interface IContact {
     phoneNumber: string;
     company: string;
     notes: string;
+    tags: string[];
     inTrash: boolean;
     createdAt: Date;
     updatedAt: Date;
