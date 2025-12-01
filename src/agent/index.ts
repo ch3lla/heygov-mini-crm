@@ -16,6 +16,7 @@ export async function runAgent(userId: number, query: string) {
         ...conversationHistory,
         { role: "user", content: query }
     ];
+    addToConversationHistory(userId, { role: "user", content: query });
 
     // Start of the Turn Loop: The turn loop is the number of times the agent can call a tool or number of tool
     let finalResponseText = "";
@@ -39,6 +40,9 @@ export async function runAgent(userId: number, query: string) {
             content: response.content
         };
         currentMessages.push(assistantMessage);
+        addToConversationHistory(userId, assistantMessage);
+
+        console.log("res: ", response)
 
         if (response.stop_reason !== "tool_use") { // break out of the loop here if llm is not calling a tool
             const textBlock = response.content.find(b => b.type === "text");
@@ -53,6 +57,7 @@ export async function runAgent(userId: number, query: string) {
         for (const block of toolUseBlocks) {
             console.log(`[Agent] Executing tool: ${block.name}`);
             const result = await executeCRMTool(userId, block.name, block.input);
+
             toolResultsSummary.push({ tool: block.name, input: block.input, result }); // tracked for debugging
             toolResultBlocks.push({
                 type: "tool_result",
@@ -66,9 +71,8 @@ export async function runAgent(userId: number, query: string) {
             content: toolResultBlocks
         };
         currentMessages.push(toolResultMessage);
+        addToConversationHistory(userId, toolResultMessage);
     }
-
-    conversationHistory.push({ role: "user", content: query });
     
     return {
         message: finalResponseText,
