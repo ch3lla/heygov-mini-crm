@@ -1,14 +1,11 @@
 import type { Response } from "express";
 import type { IRequest } from "../../types/index.ts";
-import * as reminderService from "../../services/reminders/index.ts";
-import { db } from "../../db/index.ts";
-import { users } from "../../db/schema.ts";
-import { eq } from "drizzle-orm"
+import { createReminder, getReminderById, updateReminder, getAllReminders, deleteReminder } from "../../services/reminders/index.ts";
+import { getUserEmail } from "../users/index.ts";
 
-export const createReminder = async (req: IRequest, res: Response) => {
+const createUserReminder = async (req: IRequest, res: Response) => {
     const userId = req.userId;
-    const userEmail = (await db.select().from(users).where(eq(users.id, Number(userId))))[0]?.email!;
-    console.log("Email: ", userEmail)
+    const userEmail = await getUserEmail(userId!);
     const { title, description, dueDate } = req.body;
 
     if (!userId || !title || !dueDate || !userEmail) {
@@ -20,7 +17,7 @@ export const createReminder = async (req: IRequest, res: Response) => {
     }
 
     try {
-        const reminder = await reminderService.createReminder({
+        const reminder = await createReminder({
             title,
             description,
             dueDate,
@@ -39,7 +36,7 @@ export const createReminder = async (req: IRequest, res: Response) => {
     }
 };
 
-export const getReminder = async (req: IRequest, res: Response) => {
+const getUserReminder = async (req: IRequest, res: Response) => {
     const userId = req.userId;
     const { reminderId } = req.params;
 
@@ -49,7 +46,7 @@ export const getReminder = async (req: IRequest, res: Response) => {
     });
 
     try {
-        const reminder = await reminderService.getReminderById(Number(reminderId), userId);
+        const reminder = await getReminderById(Number(reminderId), userId);
         if (!reminder) {
             res.status(404).json({
                 status: "Error",
@@ -70,7 +67,7 @@ export const getReminder = async (req: IRequest, res: Response) => {
     }
 };
 
-export const getReminders = async (req: IRequest, res: Response) => {
+const getReminders = async (req: IRequest, res: Response) => {
     const userId = req.userId;
     if (!userId) {
         res.status(401).json({
@@ -81,7 +78,7 @@ export const getReminders = async (req: IRequest, res: Response) => {
     }
 
     try {
-        const reminders = await reminderService.getAllReminders(userId);
+        const reminders = await getAllReminders(userId);
         res.status(200).json({
             status: "Success",
             data: reminders
@@ -94,7 +91,7 @@ export const getReminders = async (req: IRequest, res: Response) => {
     }
 };
 
-export const updateReminder = async (req: IRequest, res: Response) => {
+const updateUserReminder = async (req: IRequest, res: Response) => {
     const userId = req.userId;
     const { reminderId } = req.params;
     const updates = req.body;
@@ -108,7 +105,7 @@ export const updateReminder = async (req: IRequest, res: Response) => {
     }
 
     try {
-        const success = await reminderService.updateReminder(Number(reminderId), userId, updates);
+        const success = await updateReminder(Number(reminderId), userId, updates);
         if (!success) { 
             res.status(404).json({
                 status: "Error",
@@ -129,7 +126,7 @@ export const updateReminder = async (req: IRequest, res: Response) => {
     }
 };
 
-export const deleteReminder = async (req: IRequest, res: Response) => {
+const deleteUserReminder = async (req: IRequest, res: Response) => {
     const userId = req.userId;
     const { reminderId } = req.params;
 
@@ -142,7 +139,7 @@ export const deleteReminder = async (req: IRequest, res: Response) => {
     }
 
     try {
-        const success = await reminderService.deleteReminder(Number(reminderId), userId);
+        const success = await deleteReminder(Number(reminderId), userId);
         if (!success) {
             res.status(404).json({
                 status: "Error",
@@ -162,3 +159,5 @@ export const deleteReminder = async (req: IRequest, res: Response) => {
         });
     }
 };
+
+export { createUserReminder, getUserReminder, getReminders, updateUserReminder, deleteUserReminder };

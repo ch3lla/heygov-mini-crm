@@ -3,7 +3,7 @@ import { reminders } from "../../db/schema.ts";
 import { eq, and, desc } from "drizzle-orm";
 import type { IReminderInput } from "../../types/index.ts";
 
-export const createReminder = async (data: IReminderInput, userId: number) => {
+const createReminder = async (data: IReminderInput, userId: number) => {
     try {
         const [result] = await db.insert(reminders).values({
             userId,
@@ -22,7 +22,7 @@ export const createReminder = async (data: IReminderInput, userId: number) => {
     }
 };
 
-export const getReminderById = async (id: number, userId: number) => {
+const getReminderById = async (id: number, userId: number) => {
     const result = await db.select()
         .from(reminders)
         .where(and(
@@ -33,14 +33,14 @@ export const getReminderById = async (id: number, userId: number) => {
     return result[0] || null;
 };
 
-export const getAllReminders = async (userId: number) => {
+const getAllReminders = async (userId: number) => {
     return await db.select()
         .from(reminders)
         .where(eq(reminders.userId, userId))
         .orderBy(desc(reminders.dueDate));
 };
 
-export const updateReminder = async (id: number, userId: number, data: Partial<IReminderInput>) => {
+const updateReminder = async (id: number, userId: number, data: Partial<IReminderInput>) => {
     const updateData: any = {};
     if (data.title) updateData.title = data.title;
     if (data.description) updateData.description = data.description;
@@ -56,9 +56,11 @@ export const updateReminder = async (id: number, userId: number, data: Partial<I
     return result.affectedRows > 0;
 };
 
-export const deleteReminder = async (id: number, userId: number) => {
+const deleteReminder = async (id: number, userId: number) => {
     const [result] = await db.delete(reminders)
         .where(and(eq(reminders.id, id), eq(reminders.userId, userId)));
     
     return result.affectedRows > 0;
 };
+
+export { createReminder, getReminderById, updateReminder, getAllReminders, deleteReminder }
