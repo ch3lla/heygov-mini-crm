@@ -1,5 +1,5 @@
 import { relations, sql } from "drizzle-orm";
-import { mysqlTable, text, varchar, int, timestamp, check, boolean, json } from "drizzle-orm/mysql-core";
+import { mysqlTable, text, varchar, int, timestamp, check, boolean, json, unique } from "drizzle-orm/mysql-core";
 
 export const users = mysqlTable("users", {
     id: int("id").primaryKey().autoincrement(),
@@ -16,7 +16,7 @@ export const contacts = mysqlTable("contacts", {
     id: int("id").primaryKey().autoincrement(),
     firstName: varchar("first_name", { length: 100 }),
     lastName: varchar("last_name", { length: 100 }),
-    email: varchar("email", { length: 150 }).unique(),
+    email: varchar("email", { length: 150 }),
     phoneNumber: varchar("phone_number", { length: 150 }),
     company: varchar("company", { length: 150 }),
     userId: int("user_id").notNull().references(() => users.id),
@@ -28,6 +28,7 @@ export const contacts = mysqlTable("contacts", {
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 }, (t) => ({
     nameOrEmailPresent: check('name_or_email_present', sql`email IS NOT NULL OR first_name IS NOT NULL`),
+    uniqueEmailPerUser: unique("unique_email_per_user").on(t.userId, t.email),
 }));
 
 export const reminders = mysqlTable("reminders", {
