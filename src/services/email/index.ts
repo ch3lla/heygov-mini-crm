@@ -5,7 +5,7 @@ const sendEmail = async (to: string, subject: string, html: string) => {
   try {
     const resend = new Resend(process.env.RESEND_API_KEY);
     const { data, error } = await resend.emails.send({
-      from: `"HeyGov Assistant" <${process.env.EMAIL_USER}>`,
+      from: `"HeyGov CRM Assistant " <${process.env.EMAIL_USER}>`,
       to,
       subject,
       html,
