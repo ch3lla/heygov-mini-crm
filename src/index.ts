@@ -12,7 +12,9 @@ export const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 app.use(cors({
-    origin: "*"
+    origin: [process.env.CLIENT_URL!],
+    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+    credentials: true
 }));
 app.use(morgan("dev")); // route logger
 
