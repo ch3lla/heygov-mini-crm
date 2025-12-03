@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 app.use(cors({
     origin: [process.env.CLIENT_URL!],
-    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+    optionsSuccessStatus: 200,
     credentials: true
 }));
 app.use(morgan("dev")); // route logger
