@@ -64,6 +64,7 @@ export interface IContact {
     notes: string;
     tags: string[];
     inTrash: boolean;
+    isDeleted?: boolean;
     createdAt: Date;
     updatedAt: Date;
 }
