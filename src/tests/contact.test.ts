@@ -133,7 +133,7 @@ describe("Contacts Routes", () => {
 
     describe("PATCH /api/v1/contacts/update/:contactId", () => {
         it("should update contact successfully", async () => {
-            vi.mocked(contactService.update).mockResolvedValue(true);
+            vi.mocked(contactService.update).mockResolvedValue({ id: 1, firstName: "Updated", userId: 1 } as any);
 
             const res = await request(app)
                 .patch("/api/v1/contacts/update/1")
@@ -145,7 +145,7 @@ describe("Contacts Routes", () => {
         });
 
         it("should return 404 if service returns false (not found)", async () => {
-            vi.mocked(contactService.update).mockResolvedValue(false);
+            vi.mocked(contactService.update).mockResolvedValue(null);
 
             const res = await request(app)
                 .patch("/api/v1/contacts/update/999")
