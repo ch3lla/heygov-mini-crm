@@ -1,6 +1,7 @@
 import type { IRequest } from "../../types/index.js";
 import type { Response } from "express";
-import { createContact, getContactById, getAllContacts, update, softDelete, permanentDelete, getTrashSites, restoreContact } from "../../services/contacts/index.js"
+import { createContact, getContactById, getAllContacts, update, softDelete, permanentDelete, getTrashSites, restoreContact } from "../../services/contacts/index.js";
+import { sendUpdateToUser } from "../../utils/events.js";
 
 const addContact = async (req: IRequest, res: Response) => {
     const userId = req.userId;
@@ -24,6 +25,9 @@ const addContact = async (req: IRequest, res: Response) => {
             notes
         }, Number(userId))
 
+        if (newContact ! == null) {
+            sendUpdateToUser(Number(userId), 'ADD', newContact);
+        }
         res.status(201).json({
             status: "Success",
             message: "Contact addedd successfully",
@@ -146,6 +150,8 @@ const updateContact = async (req: IRequest, res: Response) => {
             return;
         }
 
+        sendUpdateToUser(Number(userId), 'UPDATE', result);
+
         return res.status(200).json({
             status: "Success",
             message: "Contact updated successfully"
@@ -172,6 +178,8 @@ const temporaryDeleteContact = async (req: IRequest, res: Response) => {
 
     try {
         await softDelete(Number(contactId), Number(userId));
+
+        sendUpdateToUser(Number(userId), 'DELETE', { id: Number(contactId) });
 
         return res.status(204).json({
             status: "Success",
