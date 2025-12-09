@@ -2,20 +2,23 @@ import { createContact, search, update, softDelete, createInteraction, generateB
 import { sendEmail } from "../../services/email/index.js";
 import { createReminder } from "../../services/reminders/index.js";
 import { getUserEmail } from "../../controllers/users/index.js";
+import { sendUpdateToUser } from "../../utils/events.js";
 
 export const executeCRMTool = async ( userId: number, toolName: string, toolInput: any): Promise<any> => {
     try {
-        switch (toolName) {
+        switch (toolName) { // 8 tools
             case 'create_contact':
                 if (!toolInput.firstName && !toolInput.email) {
                     throw new Error('firstName or email is required to create a contact');
                 }
 
-                const contactId = await createContact(toolInput, userId);
-                
+                const newContact = await createContact(toolInput, userId);
+                if (newContact !== null) {
+                    sendUpdateToUser(userId, 'ADD', newContact);
+                }
                 return {
                     success: true,
-                    contactId,
+                    newContact,
                     message: `Contact ${toolInput.firstName} ${toolInput.lastName || ''} created successfully`
                 };
 
@@ -52,6 +55,8 @@ export const executeCRMTool = async ( userId: number, toolName: string, toolInpu
                     throw new Error('Contact not found or no fields to update');
                 }
 
+                sendUpdateToUser(userId, 'UPDATE', updated);
+
                 return {
                     success: true,
                     message: 'Contact updated successfully'
@@ -63,6 +68,8 @@ export const executeCRMTool = async ( userId: number, toolName: string, toolInpu
                 }
 
                 await softDelete(toolInput.contactId, userId);
+
+                sendUpdateToUser(userId, 'DELETE', { id: toolInput.contactId });
 
                 return {
                     success: true,
