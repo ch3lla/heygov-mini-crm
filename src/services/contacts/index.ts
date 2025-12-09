@@ -56,7 +56,7 @@ const getAllContacts = (userId: number) => {
     ));
 }
 
-const update = async (contactId: number, userId: number, data: IUpdateInput): Promise<boolean> => {
+const update = async (contactId: number, userId: number, data: IUpdateInput): Promise<IContact | null> => {
 
     const updatePayload: Record<string, any> = {};
     if (data.firstName !== undefined) updatePayload.firstName = data.firstName;
@@ -67,7 +67,7 @@ const update = async (contactId: number, userId: number, data: IUpdateInput): Pr
     if (data.notes !== undefined) updatePayload.notes = data.notes || null;
     
     if (Object.keys(updatePayload).length === 0) {
-        return false;
+        return null;
     }
 
     const result = await db.update(contacts).set(updatePayload).where(and(
@@ -75,7 +75,12 @@ const update = async (contactId: number, userId: number, data: IUpdateInput): Pr
         eq(contacts.userId, userId)
     ));
 
-    return result.length > 0;
+    if (result.length > 0) {
+        const updatedContact =  await getContactById(contactId, userId)
+        return updatedContact as IContact | null
+    } else {
+        return null
+    }
 }
 
 const softDelete = async (contactId: number, userId: number) => {
