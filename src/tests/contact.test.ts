@@ -133,7 +133,22 @@ describe("Contacts Routes", () => {
 
     describe("PATCH /api/v1/contacts/update/:contactId", () => {
         it("should update contact successfully", async () => {
-            vi.mocked(contactService.update).mockResolvedValue({ id: 1, firstName: "Updated", userId: 1 } as any);
+            const mockUpdatedContact = { 
+                id: 1, 
+                firstName: "Updated", 
+                lastName: "User",
+                email: "updated@example.com",
+                phoneNumber: "123456789",
+                company: "Test Co",
+                notes: "Test notes",
+                tags: [],
+                inTrash: false,
+                isDeleted: false,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                userId: 1 
+            };
+            vi.mocked(contactService.update).mockResolvedValue(mockUpdatedContact);
 
             const res = await request(app)
                 .patch("/api/v1/contacts/update/1")
